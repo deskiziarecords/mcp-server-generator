@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Server Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #8338ec;
+            --success: #38b000;
+            --danger: #ff006e;
+            --warning: #ffbe0b;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .app-container {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .sidebar {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+        }
+
+        .main-content {
+            flex: 2;
+            min-width: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ddd;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: monospace;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input {
+            width: auto;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2a75ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #2d9a00;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e0005e;
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .server-details {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .server-details h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-block pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .tab-container {
+            margin-bottom: 25px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tool-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tool-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tool-actions button {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+
+        .resource-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            background: var(--success);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+            color: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #aaa;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--gray);
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gray);
+        }
+
+        .status-indicator.active {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .status-indicator.inactive {
+            background: var(--danger);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 1100px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar, .main-content {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-server"></i>
+                <div>
+                    <h1>MCP Server Generator</h1>
+                    <div class="subtitle">Create custom Model Context Protocol servers with a visual interface</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-container">
+            <div class="sidebar">
+                <h2 class="section-title"><i class="fas fa-cogs"></i> Server Configuration</h2>
+                
+                <div class="form-group">
+                    <label for="serverName"><i class="fas fa-signature"></i> Server Name</label>
+                    <input type="text" id="serverName" placeholder="My MCP Server" value="MyCustomMCPServer">
+                </div>
+                
+                <div class="form-group">
+                    <label for="serverVersion"><i class="fas fa-code-branch"></i> Version</label>
+                    <input type="text" id="serverVersion" placeholder="1.0.0" value="1.0.0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="serverDescription"><i class="fas fa-info-circle"></i> Description</label>
+                    <textarea id="serverDescription" placeholder="Describe what your MCP server does...">A custom MCP server providing specialized tools and resources.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-tools"></i> Capabilities</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="capabilityTools" checked>
+                            <label for="capabilityTools">Tools</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="capabilityResources" checked>
+                            <label for="capabilityResources">Resources</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="capabilityPrompts">
+                            <label for="capabilityPrompts">Prompts</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transportType"><i class="fas fa-network-wired"></i> Transport Type</label>
+                    <select id="transportType">
+                        <option value="stdio">stdio</option>
+                        <option value="sse">SSE (Server-Sent Events)</option>
+                        <option value="http">HTTP</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary btn-full" id="generateServerBtn">
+                    <i class="fas fa-bolt"></i> Generate Server Code
+                </button>
+                
+                <div class="server-details">
+                    <h4><i class="fas fa-info-circle"></i> Generated Server Details</h4>
+                    <div class="server-status">
+                        <div class="status-indicator inactive" id="statusIndicator"></div>
+                        <span id="statusText">Server not generated yet</span>
+                    </div>
+                    <div id="serverInfo"></div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="tools"><i class="fas fa-tools"></i> Tools</div>
+                        <div class="tab" data-tab="resources"><i class="fas fa-database"></i> Resources</div>
+                        <div class="tab" data-tab="config"><i class="fas fa-code"></i> Configuration</div>
+                        <div class="tab" data-tab="export"><i class="fas fa-download"></i> Export</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="tools-tab">
+                        <div class="tool-item" id="tool-template" style="display: none;">
+                            <div class="tool-header">
+                                <h3 class="tool-name">Tool Name</h3>
+                                <div class="tool-actions">
+                                    <button class="btn btn-secondary edit-tool"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger delete-tool"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="tool-description">Tool description goes here</div>
+                            <div class="code-block">
+                                <pre class="tool-schema">{"name": "tool_name", "description": "...", "inputSchema": {...}}</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="tools-list">
+                            <div class="empty-state" id="no-tools">
+                                <i class="fas fa-tools"></i>
+                                <h3>No Tools Added</h3>
+                                <p>Add your first tool to get started</p>
+                            </div>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="btn btn-primary" id="addToolBtn">
+                                <i class="fas fa-plus"></i> Add New Tool
+                            </button>
+                            <button class="btn btn-secondary" id="importToolsBtn">
+                                <i class="fas fa-file-import"></i> Import Tools
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="resources-tab">
+                        <div class="resource-item" id="resource-template" style="display: none;">
+                            <div class="tool-header">
+                                <h3 class="resource-name">Resource Name</h3>
+                                <div class="tool-actions">
+                                    <button class="btn btn-secondary edit-resource"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger delete-resource"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="resource-description">Resource description goes here</div>
+                            <div class="code-block">
+                                <pre class="resource-schema">{"uri": "resource://uri", "name": "...", "description": "..."}</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="resources-list">
+                            <div class="empty-state" id="no-resources">
+                                <i class="fas fa-database"></i>
+                                <h3>No Resources Added</h3>
+                                <p>Add your first resource to get started</p>
+                            </div>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="btn btn-primary" id="addResourceBtn">
+                                <i class="fas fa-plus"></i> Add New Resource
+                            </button>
+                            <button class="btn btn-secondary" id="importResourcesBtn">
+                                <i class="fas fa-file-import"></i> Import Resources
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="config-tab">
+                        <div class="form-group">
+                            <label for="packageName"><i class="fas fa-box"></i> Package Name</label>
+                            <input type="text" id="packageName" placeholder="@username/mcp-server-name" value="@myuser/mcp-custom-server">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="authorName"><i class="fas fa-user"></i> Author Name</label>
+                            <input type="text" id="authorName" placeholder="Your Name" value="Developer">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="license"><i class="fas fa-file-contract"></i> License</label>
+                            <select id="license">
+                                <option value="MIT">MIT</option>
+                                <option value="Apache-2.0">Apache 2.0</option>
+                                <option value="GPL-3.0">GPL-3.0</option>
+                                <option value="ISC">ISC</option>
+                                <option value="UNLICENSED">UNLICENSED</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-plug"></i> Dependencies</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="depExpress" checked>
+                                    <label for="depExpress">Express</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="depAxios" checked>
+                                    <label for="depAxios">Axios</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="depZod">
+                                    <label for="depZod">Zod</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="code-block">
+                            <pre id="configPreview">Configuration preview will appear here...</pre>
+                        </div>
+                        
+                        <button class="btn btn-primary" id="updateConfigBtn">
+                            <i class="fas fa-sync-alt"></i> Update Configuration
+                        </button>
+                    </div>
+                    
+                    <div class="tab-content" id="export-tab">
+                        <div class="form-group">
+                            <label for="exportFormat"><i class="fas fa-file-export"></i> Export Format</label>
+                            <select id="exportFormat">
+                                <option value="zip">ZIP Archive (Full Project)</option>
+                                <option value="json">JSON Configuration</option>
+                                <option value="typescript">TypeScript File</option>
+                                <option value="javascript">JavaScript File</option>
+                            </select>
+                        </div>
+                        
+                        <div class="code-block">
+                            <pre id="exportPreview">Export preview will appear here...</pre>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="btn btn-success" id="downloadBtn">
+                                <i class="fas fa-download"></i> Download Server
+                            </button>
+                            <button class="btn btn-primary" id="copyCodeBtn">
+                                <i class="fas fa-copy"></i> Copy Code
+                            </button>
+                            <button class="btn btn-secondary" id="previewBtn">
+                                <i class="fas fa-eye"></i> Preview Full Code
+                            </button>
+                        </div>
+                        
+                        <div class="server-details" style="margin-top: 25px;">
+                            <h4><i class="fas fa-terminal"></i> Installation Instructions</h4>
+                            <div class="code-block">
+                                <pre id="installationInstructions">
+# Installation steps will appear here after generation
+1. Extract the downloaded ZIP file
+2. Run: npm install
+3. Run: npm start
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>MCP Server Generator v1.0 | Standalone Web Application | Compatible with Claude Desktop & MCP-compatible clients</p>
+        </footer>
+        
+        <div class="notification" id="notification">
+            <i class="fas fa-check-circle"></i>
+            <span>Notification message</span>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing tools -->
+    <div id="toolModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: #2d3748; width: 90%; max-width: 700px; border-radius: 15px; padding: 30px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="margin-bottom: 25px; color: var(--primary);"><i class="fas fa-tools"></i> <span id="modalToolTitle">Add New Tool</span></h2>
+            
+            <div class="form-group">
+                <label for="toolNameInput">Tool Name</label>
+                <input type="text" id="toolNameInput" placeholder="e.g., search_web">
+            </div>
+            
+            <div class="form-group">
+                <label for="toolDescriptionInput">Description</label>
+                <textarea id="toolDescriptionInput" placeholder="Describe what this tool does..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="toolInputSchema">Input Schema (JSON)</label>
+                <textarea id="toolInputSchema" placeholder='{"type": "object", "properties": {"query": {"type": "string", "description": "Search query"}}}'>{"type": "object", "properties": {}}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="toolHandlerCode">Handler Code (JavaScript)</label>
+                <textarea id="toolHandlerCode" placeholder="async function handler({ query }) { return { content: [{ type: 'text', text: 'Result for ' + query }] }; }">async function handler(params) {
+  // Implement your tool logic here
+  return {
+    content: [
+      {
+        type: 'text',
+        text: 'Tool executed successfully'
+      }
+    ]
+  };
+}</textarea>
+            </div>
+            
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn btn-primary" id="saveToolBtn">Save Tool</button>
+                <button class="btn btn-secondary" id="cancelToolBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing resources -->
+    <div id="resourceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: #2d3748; width: 90%; max-width: 700px; border-radius: 15px; padding: 30px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="margin-bottom: 25px; color: var(--primary);"><i class="fas fa-database"></i> <span id="modalResourceTitle">Add New Resource</span></h2>
+            
+            <div class="form-group">
+                <label for="resourceNameInput">Resource Name</label>
+                <input type="text" id="resourceNameInput" placeholder="e.g., user_profile">
+            </div>
+            
+            <div class="form-group">
+                <label for="resourceUriInput">URI Template</label>
+                <input type="text" id="resourceUriInput" placeholder="e.g., user://{userId}/profile">
+            </div>
+            
+            <div class="form-group">
+                <label for="resourceDescriptionInput">Description</label>
+                <textarea id="resourceDescriptionInput" placeholder="Describe what this resource provides..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="resourceHandlerCode">Handler Code (JavaScript)</label>
+                <textarea id="resourceHandlerCode" placeholder="async function handler({ userId }) { return { contents: [{ type: 'text', text: 'Profile for user ' + userId }] }; }">async function handler(params) {
+  // Implement your resource logic here
+  return {
+    contents: [
+      {
+        type: 'text',
+        text: 'Resource content'
+      }
+    ]
+  };
+}</textarea>
+            </div>
+            
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn btn-primary" id="saveResourceBtn">Save Resource</button>
+                <button class="btn btn-secondary" id="cancelResourceBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application state
+        const state = {
+            tools: [],
+            resources: [],
+            currentToolIndex: -1,
+            currentResourceIndex: -1,
+            serverGenerated: false,
+            serverConfig: {
+                name: "MyCustomMCPServer",
+                version: "1.0.0",
+                description: "A custom MCP server providing specialized tools and resources.",
+                capabilities: {
+                    tools: true,
+                    resources: true,
+                    prompts: false
+                },
+                transport: "stdio",
+                packageName: "@myuser/mcp-custom-server",
+                author: "Developer",
+                license: "MIT",
+                dependencies: {
+                    express: true,
+                    axios: true,
+                    zod: false
+                }
+            }
+        };
+
+        // DOM Elements
+        const elements = {
+            // Tabs
+            tabs: document.querySelectorAll('.tab'),
+            tabContents: document.querySelectorAll('.tab-content'),
+            
+            // Server configuration
+            serverName: document.getElementById('serverName'),
+            serverVersion: document.getElementById('serverVersion'),
+            serverDescription: document.getElementById('serverDescription'),
+            capabilityTools: document.getElementById('capabilityTools'),
+            capabilityResources: document.getElementById('capabilityResources'),
+            capabilityPrompts: document.getElementById('capabilityPrompts'),
+            transportType: document.getElementById('transportType'),
+            
+            // Tools
+            toolsList: document.getElementById('tools-list'),
+            noTools: document.getElementById('no-tools'),
+            addToolBtn: document.getElementById('addToolBtn'),
+            importToolsBtn: document.getElementById('importToolsBtn'),
+            
+            // Resources
+            resourcesList: document.getElementById('resources-list'),
+            noResources: document.getElementById('no-resources'),
+            addResourceBtn: document.getElementById('addResourceBtn'),
+            importResourcesBtn: document.getElementById('importResourcesBtn'),
+            
+            // Configuration
+            packageName: document.getElementById('packageName'),
+            authorName: document.getElementById('authorName'),
+            license: document.getElementById('license'),
+            depExpress: document.getElementById('depExpress'),
+            depAxios: document.getElementById('depAxios'),
+            depZod: document.getElementById('depZod'),
+            configPreview: document.getElementById('configPreview'),
+            updateConfigBtn: document.getElementById('updateConfigBtn'),
+            
+            // Export
+            exportFormat: document.getElementById('exportFormat'),
+            exportPreview: document.getElementById('exportPreview'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            copyCodeBtn: document.getElementById('copyCodeBtn'),
+            previewBtn: document.getElementById('previewBtn'),
+            installationInstructions: document.getElementById('installationInstructions'),
+            
+            // Server status
+            statusIndicator: document.getElementById('statusIndicator'),
+            statusText: document.getElementById('statusText'),
+            serverInfo: document.getElementById('serverInfo'),
+            
+            // Generate button
+            generateServerBtn: document.getElementById('generateServerBtn'),
+            
+            // Modals
+            toolModal: document.getElementById('toolModal'),
+            resourceModal: document.getElementById('resourceModal'),
+            toolNameInput: document.getElementById('toolNameInput'),
+            toolDescriptionInput: document.getElementById('toolDescriptionInput'),
+            toolInputSchema: document.getElementById('toolInputSchema'),
+            toolHandlerCode: document.getElementById('toolHandlerCode'),
+            resourceNameInput: document.getElementById('resourceNameInput'),
+            resourceUriInput: document.getElementById('resourceUriInput'),
+            resourceDescriptionInput: document.getElementById('resourceDescriptionInput'),
+            resourceHandlerCode: document.getElementById('resourceHandlerCode'),
+            modalToolTitle: document.getElementById('modalToolTitle'),
+            modalResourceTitle: document.getElementById('modalResourceTitle'),
+            
+            // Notification
+            notification: document.getElementById('notification')
+        };
+
+        // Initialize the application
+        function init() {
+            // Load sample data
+            loadSampleData();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Update configuration preview
+            updateConfigPreview();
+            
+            // Update export preview
+            updateExportPreview();
+            
+            // Show notification
+            showNotification('MCP Server Generator loaded!', 'success');
+        }
+
+        // Load sample data for demonstration
+        function loadSampleData() {
+            // Add sample tools
+            state.tools.push({
+                name: "search_web",
+                description: "Search the web for information",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        query: {
+                            type: "string",
+                            description: "Search query"
+                        },
+                        maxResults: {
+                            type: "number",
+                            description: "Maximum number of results",
+                            default: 5
+                        }
+                    },
+                    required: ["query"]
+                },
+                handlerCode: `async function searchWeb({ query, maxResults = 5 }) {
+  // In a real implementation, this would call a search API
+  return {
+    content: [
+      {
+        type: 'text',
+        text: \`Search results for "\${query}" (showing \${maxResults} results):\\n\\n1. Result 1\\n2. Result 2\\n3. Result 3\`
+      }
+    ]
+  };
+}`
+            });
+
+            // Add sample resources
+            state.resources.push({
+                name: "user_profile",
+                uri: "user://{userId}/profile",
+                description: "Get user profile information",
+                handlerCode: `async function getUserProfile({ userId }) {
+  // In a real implementation, this would fetch from a database
+  const profiles = {
+    "123": { name: "John Doe", email: "john@example.com", role: "admin" },
+    "456": { name: "Jane Smith", email: "jane@example.com", role: "user" }
+  };
+  
+  const profile = profiles[userId] || { name: "Unknown User", error: "User not found" };
+  
+  return {
+    contents: [
+      {
+        type: 'text',
+        text: \`User Profile for ID \${userId}:\\n\\n\${JSON.stringify(profile, null, 2)}\`
+      }
+    ]
+  };
+}`
+            });
+
+            // Update UI
+            renderTools();
+            renderResources();
+        }
+
+        // Set up all event listeners
+        function setupEventListeners() {
+            // Tab switching
+            elements.tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Server configuration changes
+            elements.serverName.addEventListener('input', updateServerConfig);
+            elements.serverVersion.addEventListener('input', updateServerConfig);
+            elements.serverDescription.addEventListener('input', updateServerConfig);
+            elements.capabilityTools.addEventListener('change', updateServerConfig);
+            elements.capabilityResources.addEventListener('change', updateServerConfig);
+            elements.capabilityPrompts.addEventListener('change', updateServerConfig);
+            elements.transportType.addEventListener('change', updateServerConfig);
+            
+            // Package configuration changes
+            elements.packageName.addEventListener('input', updatePackageConfig);
+            elements.authorName.addEventListener('input', updatePackageConfig);
+            elements.license.addEventListener('change', updatePackageConfig);
+            elements.depExpress.addEventListener('change', updatePackageConfig);
+            elements.depAxios.addEventListener('change', updatePackageConfig);
+            elements.depZod.addEventListener('change', updatePackageConfig);
+            
+            // Buttons
+            elements.generateServerBtn.addEventListener('click', generateServer);
+            elements.addToolBtn.addEventListener('click', () => openToolModal());
+            elements.addResourceBtn.addEventListener('click', () => openResourceModal());
+            elements.importToolsBtn.addEventListener('click', importTools);
+            elements.importResourcesBtn.addEventListener('click', importResources);
+            elements.updateConfigBtn.addEventListener('click', updateConfigPreview);
+            elements.downloadBtn.addEventListener('click', downloadServer);
+            elements.copyCodeBtn.addEventListener('click', copyCodeToClipboard);
+            elements.previewBtn.addEventListener('click', previewFullCode);
+            
+            // Export format change
+            elements.exportFormat.addEventListener('change', updateExportPreview);
+            
+            // Modal buttons
+            document.getElementById('saveToolBtn').addEventListener('click', saveTool);
+            document.getElementById('cancelToolBtn').addEventListener('click', closeToolModal);
+            document.getElementById('saveResourceBtn').addEventListener('click', saveResource);
+            document.getElementById('cancelResourceBtn').addEventListener('click', closeResourceModal);
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === elements.toolModal) closeToolModal();
+                if (e.target === elements.resourceModal) closeResourceModal();
+            });
+        }
+
+        // Switch between tabs
+        function switchTab(tabId) {
+            // Update active tab
+            elements.tabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Update active tab content
+            elements.tabContents.forEach(content => {
+                if (content.id === `${tabId}-tab`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+            
+            // Update previews based on active tab
+            if (tabId === 'config') {
+                updateConfigPreview();
+            } else if (tabId === 'export') {
+                updateExportPreview();
+            }
+        }
+
+        // Update server configuration from form
+        function updateServerConfig() {
+            state.serverConfig.name = elements.serverName.value;
+            state.serverConfig.version = elements.serverVersion.value;
+            state.serverConfig.description = elements.serverDescription.value;
+            state.serverConfig.capabilities.tools = elements.capabilityTools.checked;
+            state.serverConfig.capabilities.resources = elements.capabilityResources.checked;
+            state.serverConfig.capabilities.prompts = elements.capabilityPrompts.checked;
+            state.serverConfig.transport = elements.transportType.value;
+        }
+
+        // Update package configuration from form
+        function updatePackageConfig() {
+            state.serverConfig.packageName = elements.packageName.value;
+            state.serverConfig.author = elements.authorName.value;
+            state.serverConfig.license = elements.license.value;
+            state.serverConfig.dependencies.express = elements.depExpress.checked;
+            state.serverConfig.dependencies.axios = elements.depAxios.checked;
+            state.serverConfig.dependencies.zod = elements.depZod.checked;
+            
+            updateConfigPreview();
+        }
+
+        // Render tools list
+        function renderTools() {
+            elements.toolsList.innerHTML = '';
+            
+            if (state.tools.length === 0) {
+                elements.noTools.style.display = 'block';
+                return;
+            }
+            
+            elements.noTools.style.display = 'none';
+            
+            state.tools.forEach((tool, index) => {
+                const toolElement = document.createElement('div');
+                toolElement.className = 'tool-item';
+                toolElement.innerHTML = `
+                    <div class="tool-header">
+                        <h3 class="tool-name">${tool.name}</h3>
+                        <div class="tool-actions">
+                            <button class="btn btn-secondary edit-tool" data-index="${index}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger delete-tool" data-index="${index}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="tool-description">${tool.description}</div>
+                    <div class="code-block">
+                        <pre class="tool-schema">${JSON.stringify({
+                            name: tool.name,
+                            description: tool.description,
+                            inputSchema: tool.inputSchema
+                        }, null, 2)}</pre>
+                    </div>
+                `;
+                
+                elements.toolsList.appendChild(toolElement);
+            });
+            
+            // Add event listeners to tool buttons
+            document.querySelectorAll('.edit-tool').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.currentTarget.getAttribute('data-index'));
+                    openToolModal(index);
+                });
+            });
+            
+            document.querySelectorAll('.delete-tool').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.currentTarget.getAttribute('data-index'));
+                    deleteTool(index);
+                });
+            });
+        }
+
+        // Render resources list
+        function renderResources() {
+            elements.resourcesList.innerHTML = '';
+            
+            if (state.resources.length === 0) {
+                elements.noResources.style.display = 'block';
+                return;
+            }
+            
+            elements.noResources.style.display = 'none';
+            
+            state.resources.forEach((resource, index) => {
+                const resourceElement = document.createElement('div');
+                resourceElement.className = 'resource-item';
+                resourceElement.innerHTML = `
+                    <div class="tool-header">
+                        <h3 class="resource-name">${resource.name}</h3>
+                        <div class="tool-actions">
+                            <button class="btn btn-secondary edit-resource" data-index="${index}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger delete-resource" data-index="${index}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="resource-description">${resource.description}</div>
+                    <div class="code-block">
+                        <pre class="resource-schema">${JSON.stringify({
+                            uri: resource.uri,
+                            name: resource.name,
+                            description: resource.description
+                        }, null, 2)}</pre>
+                    </div>
+                `;
+                
+                elements.resourcesList.appendChild(resourceElement);
+            });
+            
+            // Add event listeners to resource buttons
+            document.querySelectorAll('.edit-resource').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.currentTarget.getAttribute('data-index'));
+                    openResourceModal(index);
+                });
+            });
+            
+            document.querySelectorAll('.delete-resource').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.currentTarget.getAttribute('data-index'));
+                    deleteResource(index);
+                });
+            });
+        }
+
+        // Open tool modal for adding/editing
+        function openToolModal(index = -1) {
+            state.currentToolIndex = index;
+            
+            if (index === -1) {
+                // New tool
+                elements.modalToolTitle.textContent = "Add New Tool";
+                elements.toolNameInput.value = "";
+                elements.toolDescriptionInput.value = "";
+                elements.toolInputSchema.value = '{"type": "object", "properties": {}}';
+                elements.toolHandlerCode.value = `async function handler(params) {
+  // Implement your tool logic here
+  return {
+    content: [
+      {
+        type: 'text',
+        text: 'Tool executed successfully'
+      }
+    ]
+  };
+}`;
+            } else {
+                // Edit existing tool
+                const tool = state.tools[index];
+                elements.modalToolTitle.textContent = "Edit Tool";
+                elements.toolNameInput.value = tool.name;
+                elements.toolDescriptionInput.value = tool.description;
+                elements.toolInputSchema.value = JSON.stringify(tool.inputSchema, null, 2);
+                elements.toolHandlerCode.value = tool.handlerCode;
+            }
+            
+            elements.toolModal.style.display = 'flex';
+        }
+
+        // Close tool modal
+        function closeToolModal() {
+            elements.toolModal.style.display = 'none';
+            state.currentToolIndex = -1;
+        }
+
+        // Save tool from modal
+        function saveTool() {
+            const name = elements.toolNameInput.value.trim();
+            const description = elements.toolDescriptionInput.value.trim();
+            const inputSchema = elements.toolInputSchema.value.trim();
+            const handlerCode = elements.toolHandlerCode.value.trim();
+            
+            if (!name || !description) {
+                showNotification('Tool name and description are required', 'error');
+                return;
+            }
+            
+            let parsedSchema;
+            try {
+                parsedSchema = JSON.parse(inputSchema);
+            } catch (e) {
+                showNotification('Invalid JSON schema', 'error');
+                return;
+            }
+            
+            const tool = {
+                name,
+                description,
+                inputSchema: parsedSchema,
+                handlerCode
+            };
+            
+            if (state.currentToolIndex === -1) {
+                // Add new tool
+                state.tools.push(tool);
+                showNotification(`Tool "${name}" added successfully`, 'success');
+            } else {
+                // Update existing tool
+                state.tools[state.currentToolIndex] = tool;
+                showNotification(`Tool "${name}" updated successfully`, 'success');
+            }
+            
+            renderTools();
+            closeToolModal();
+            
+            if (state.serverGenerated) {
+                updateExportPreview();
+            }
+        }
+
+        // Delete tool
+        function deleteTool(index) {
+            const toolName = state.tools[index].name;
+            if (confirm(`Are you sure you want to delete tool "${toolName}"?`)) {
+                state.tools.splice(index, 1);
+                renderTools();
+                showNotification(`Tool "${toolName}" deleted`, 'warning');
+                
+                if (state.serverGenerated) {
+                    updateExportPreview();
+                }
+            }
+        }
+
+        // Open resource modal for adding/editing
+        function openResourceModal(index = -1) {
+            state.currentResourceIndex = index;
+            
+            if (index === -1) {
+                // New resource
+                elements.modalResourceTitle.textContent = "Add New Resource";
+                elements.resourceNameInput.value = "";
+                elements.resourceUriInput.value = "";
+                elements.resourceDescriptionInput.value = "";
+                elements.resourceHandlerCode.value = `async function handler(params) {
+  // Implement your resource logic here
+  return {
+    contents: [
+      {
+        type: 'text',
+        text: 'Resource content'
+      }
+    ]
+  };
+}`;
+            } else {
+                // Edit existing resource
+                const resource = state.resources[index];
+                elements.modalResourceTitle.textContent = "Edit Resource";
+                elements.resourceNameInput.value = resource.name;
+                elements.resourceUriInput.value = resource.uri;
+                elements.resourceDescriptionInput.value = resource.description;
+                elements.resourceHandlerCode.value = resource.handlerCode;
+            }
+            
+            elements.resourceModal.style.display = 'flex';
+        }
+
+        // Close resource modal
+        function closeResourceModal() {
+            elements.resourceModal.style.display = 'none';
+            state.currentResourceIndex = -1;
+        }
+
+        // Save resource from modal
+        function saveResource() {
+            const name = elements.resourceNameInput.value.trim();
+            const uri = elements.resourceUriInput.value.trim();
+            const description = elements.resourceDescriptionInput.value.trim();
+            const handlerCode = elements.resourceHandlerCode.value.trim();
+            
+            if (!name || !uri || !description) {
+                showNotification('Resource name, URI and description are required', 'error');
+                return;
+            }
+            
+            const resource = {
+                name,
+                uri,
+                description,
+                handlerCode
+            };
+            
+            if (state.currentResourceIndex === -1) {
+                // Add new resource
+                state.resources.push(resource);
+                showNotification(`Resource "${name}" added successfully`, 'success');
+            } else {
+                // Update existing resource
+                state.resources[state.currentResourceIndex] = resource;
+                showNotification(`Resource "${name}" updated successfully`, 'success');
+            }
+            
+            renderResources();
+            closeResourceModal();
+            
+            if (state.serverGenerated) {
+                updateExportPreview();
+            }
+        }
+
+        // Delete resource
+        function deleteResource(index) {
+            const resourceName = state.resources[index].name;
+            if (confirm(`Are you sure you want to delete resource "${resourceName}"?`)) {
+                state.resources.splice(index, 1);
+                renderResources();
+                showNotification(`Resource "${resourceName}" deleted`, 'warning');
+                
+                if (state.serverGenerated) {
+                    updateExportPreview();
+                }
+            }
+        }
+
+        // Import tools (placeholder)
+        function importTools() {
+            showNotification('Import functionality would be implemented in a full version', 'warning');
+        }
+
+        // Import resources (placeholder)
+        function importResources() {
+            showNotification('Import functionality would be implemented in a full version', 'warning');
+        }
+
+        // Generate server code
+        function generateServer() {
+            updateServerConfig();
+            updatePackageConfig();
+            
+            // Update server status
+            elements.statusIndicator.className = 'status-indicator active';
+            elements.statusText.textContent = 'Server generated successfully';
+            
+            // Update server info
+            const toolsCount = state.tools.length;
+            const resourcesCount = state.resources.length;
+            elements.serverInfo.innerHTML = `
+                <p><strong>Name:</strong> ${state.serverConfig.name}</p>
+                <p><strong>Tools:</strong> ${toolsCount}</p>
+                <p><strong>Resources:</strong> ${resourcesCount}</p>
+                <p><strong>Transport:</strong> ${state.serverConfig.transport}</p>
+            `;
+            
+            state.serverGenerated = true;
+            
+            // Update installation instructions
+            updateInstallationInstructions();
+            
+            // Switch to export tab
+            switchTab('export');
+            
+            showNotification('MCP Server generated successfully!', 'success');
+        }
+
+        // Update configuration preview
+        function updateConfigPreview() {
+            const config = {
+                name: state.serverConfig.packageName,
+                version: state.serverConfig.version,
+                description: state.serverConfig.description,
+                author: state.serverConfig.author,
+                license: state.serverConfig.license,
+                main: "dist/index.js",
+                scripts: {
+                    build: "tsc",
+                    start: "node dist/index.js",
+                    dev: "tsx watch src/index.ts"
+                },
+                dependencies: {
+                    "@modelcontextprotocol/sdk": "^0.4.0"
+                },
+                devDependencies: {
+                    typescript: "^5.0.0",
+                    "tsx": "^4.0.0",
+                    "@types/node": "^20.0.0"
+                }
+            };
+            
+            // Add optional dependencies
+            if (state.serverConfig.dependencies.express) {
+                config.dependencies.express = "^4.18.0";
+            }
+            if (state.serverConfig.dependencies.axios) {
+                config.dependencies.axios = "^1.5.0";
+            }
+            if (state.serverConfig.dependencies.zod) {
+                config.dependencies.zod = "^3.22.0";
+            }
+            
+            elements.configPreview.textContent = JSON.stringify(config, null, 2);
+        }
+
+        // Update export preview based on selected format
+        function updateExportPreview() {
+            const format = elements.exportFormat.value;
+            
+            if (!state.serverGenerated) {
+                elements.exportPreview.textContent = "Generate the server first to see the preview";
+                return;
+            }
+            
+            let preview = "";
+            
+            switch (format) {
+                case "json":
+                    preview = generateServerJSON();
+                    break;
+                case "typescript":
+                    preview = generateServerTypeScript();
+                    break;
+                case "javascript":
+                    preview = generateServerJavaScript();
+                    break;
+                default:
+                    preview = generateServerPackageJSON();
+            }
+            
+            elements.exportPreview.textContent = preview;
+        }
+
+        // Generate package.json content
+        function generateServerPackageJSON() {
+            const config = {
+                name: state.serverConfig.packageName,
+                version: state.serverConfig.version,
+                description: state.serverConfig.description,
+                author: state.serverConfig.author,
+                license: state.serverConfig.license,
+                main: "dist/index.js",
+                scripts: {
+                    build: "tsc",
+                    start: "node dist/index.js",
+                    dev: "tsx watch src/index.ts"
+                },
+                dependencies: {
+                    "@modelcontextprotocol/sdk": "^0.4.0"
+                },
+                devDependencies: {
+                    typescript: "^5.0.0",
+                    "tsx": "^4.0.0",
+                    "@types/node": "^20.0.0"
+                }
+            };
+            
+            // Add optional dependencies
+            if (state.serverConfig.dependencies.express) {
+                config.dependencies.express = "^4.18.0";
+            }
+            if (state.serverConfig.dependencies.axios) {
+                config.dependencies.axios = "^1.5.0";
+            }
+            if (state.serverConfig.dependencies.zod) {
+                config.dependencies.zod = "^3.22.0";
+            }
+            
+            return JSON.stringify(config, null, 2);
+        }
+
+        // Generate server JSON configuration
+        function generateServerJSON() {
+            const serverConfig = {
+                server: {
+                    name: state.serverConfig.name,
+                    version: state.serverConfig.version,
+                    description: state.serverConfig.description,
+                    capabilities: state.serverConfig.capabilities,
+                    transport: state.serverConfig.transport
+                },
+                tools: state.tools.map(tool => ({
+                    name: tool.name,
+                    description: tool.description,
+                    inputSchema: tool.inputSchema
+                })),
+                resources: state.resources.map(resource => ({
+                    name: resource.name,
+                    uri: resource.uri,
+                    description: resource.description
+                }))
+            };
+            
+            return JSON.stringify(serverConfig, null, 2);
+        }
+
+        // Generate TypeScript server code
+        function generateServerTypeScript() {
+            let code = `import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema
+} from "@modelcontextprotocol/sdk/types.js";
+
+// Create server instance
+const server = new Server(
+  {
+    name: "${state.serverConfig.name}",
+    version: "${state.serverConfig.version}",
+  },
+  {
+    capabilities: {
+      tools: ${state.serverConfig.capabilities.tools ? '{}' : 'undefined'},
+      resources: ${state.serverConfig.capabilities.resources ? '{}' : 'undefined'},
+      prompts: ${state.serverConfig.capabilities.prompts ? '{}' : 'undefined'},
+    },
+  }
+);
+
+// Register tool handlers\n`;
+
+            // Add tool handlers
+            if (state.tools.length > 0) {
+                state.tools.forEach(tool => {
+                    code += `// ${tool.name}: ${tool.description}
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  if (request.params.name === "${tool.name}") {
+    ${tool.handlerCode}
+  }
+});
+
+`;
+                });
+            }
+
+            code += `// Register resource handlers\n`;
+
+            // Add resource handlers
+            if (state.resources.length > 0) {
+                state.resources.forEach(resource => {
+                    code += `// ${resource.name}: ${resource.description}
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  if (request.params.uri.startsWith("${resource.uri.split('{')[0]}")) {
+    ${resource.handlerCode}
+  }
+});
+
+`;
+                });
+            }
+
+            code += `// List available tools
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools: [
+      ${state.tools.map(tool => `{
+        name: "${tool.name}",
+        description: "${tool.description}",
+        inputSchema: ${JSON.stringify(tool.inputSchema)}
+      }`).join(',\n      ')}
+    ],
+  };
+});
+
+// List available resources
+server.setRequestHandler(ListResourcesRequestSchema, async () => {
+  return {
+    resources: [
+      ${state.resources.map(resource => `{
+        uri: "${resource.uri}",
+        name: "${resource.name}",
+        description: "${resource.description}"
+      }`).join(',\n      ')}
+    ],
+  };
+});
+
+// Start server
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error("${state.serverConfig.name} server running on stdio");
+}
+
+main().catch((error) => {
+  console.error("Server error:", error);
+  process.exit(1);
+});
+`;
+
+            return code;
+        }
+
+        // Generate JavaScript server code
+        function generateServerJavaScript() {
+            return generateServerTypeScript().replace(/import.*from.*/g, match => {
+                return match.replace(/import\s*{([^}]+)}\s*from\s*["']([^"']+)["'];/g, 'const {$1} = require("$2");');
+            }).replace(/async\s+function/g, 'async function')
+              .replace(/const\s+\w+\s*=\s*new\s+(\w+)/g, 'const $1 = new $1');
+        }
+
+        // Update installation instructions
+        function updateInstallationInstructions() {
+            const instructions = `# ${state.serverConfig.name}
+
+${state.serverConfig.description}
+
+## Installation
+
+1. Extract the downloaded ZIP file
+2. Navigate to the extracted directory:
+   \`\`\`bash
+   cd ${state.serverConfig.packageName.replace('@', '').replace('/', '-')}
+   \`\`\`
+3. Install dependencies:
+   \`\`\`bash
+   npm install
+   \`\`\`
+4. Build the server:
+   \`\`\`bash
+   npm run build
+   \`\`\`
+5. Run the server:
+   \`\`\`bash
+   npm start
+   \`\`\`
+
+## Usage with Claude Desktop
+
+Add this to your Claude Desktop configuration:
+
+\`\`\`json
+{
+  "mcpServers": {
+    "${state.serverConfig.packageName}": {
+      "command": "node",
+      "args": ["/path/to/${state.serverConfig.packageName.replace('@', '').replace('/', '-')}/dist/index.js"]
+    }
+  }
+}
+\`\`\`
+
+## Available Tools
+
+${state.tools.map(tool => `- **${tool.name}**: ${tool.description}`).join('\n')}
+
+## Available Resources
+
+${state.resources.map(resource => `- **${resource.name}**: ${resource.description} (URI: ${resource.uri})`).join('\n')}
+`;
+
+            elements.installationInstructions.textContent = instructions;
+        }
+
+        // Download server code
+        function downloadServer() {
+            if (!state.serverGenerated) {
+                showNotification('Please generate the server first', 'error');
+                return;
+            }
+            
+            const format = elements.exportFormat.value;
+            let content, filename, type;
+            
+            switch (format) {
+                case "zip":
+                    // In a real implementation, this would create a ZIP file
+                    // For this demo, we'll create a JSON file with all the data
+                    content = generateServerJSON();
+                    filename = `${state.serverConfig.packageName.replace('@', '').replace('/', '-')}.json`;
+                    type = 'application/json';
+                    break;
+                case "json":
+                    content = generateServerJSON();
+                    filename = `${state.serverConfig.name}-config.json`;
+                    type = 'application/json';
+                    break;
+                case "typescript":
+                    content = generateServerTypeScript();
+                    filename = 'server.ts';
+                    type = 'text/typescript';
+                    break;
+                case "javascript":
+                    content = generateServerJavaScript();
+                    filename = 'server.js';
+                    type = 'text/javascript';
+                    break;
+                default:
+                    content = generateServerPackageJSON();
+                    filename = 'package.json';
+                    type = 'application/json';
+            }
+            
+            // Create download link
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification(`Downloaded ${filename} successfully`, 'success');
+        }
+
+        // Copy code to clipboard
+        function copyCodeToClipboard() {
+            const code = elements.exportPreview.textContent;
+            navigator.clipboard.writeText(code)
+                .then(() => showNotification('Code copied to clipboard', 'success'))
+                .catch(err => showNotification('Failed to copy code', 'error'));
+        }
+
+        // Preview full server code
+        function previewFullCode() {
+            if (!state.serverGenerated) {
+                showNotification('Please generate the server first', 'error');
+                return;
+            }
+            
+            // Create a modal to show the full code
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                z-index: 3000;
+                display: flex;
+                flex-direction: column;
+                padding: 20px;
+            `;
+            
+            modal.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <h2 style="color: var(--primary);">Full Server Code Preview</h2>
+                    <button id="closePreview" class="btn btn-danger" style="align-self: flex-start;"><i class="fas fa-times"></i> Close</button>
+                </div>
+                <div style="flex: 1; overflow: auto; background: #1a1a2e; border-radius: 10px; padding: 20px;">
+                    <pre style="color: #f8f9fa; font-family: 'Courier New', monospace; font-size: 14px; white-space: pre-wrap;">${generateServerTypeScript()}</pre>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add close button event
+            modal.querySelector('#closePreview').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Close when clicking outside the content
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = elements.notification;
+            const icon = notification.querySelector('i');
+            
+            // Set message and type
+            notification.querySelector('span').textContent = message;
+            notification.className = 'notification';
+            
+            // Set icon and color based on type
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle';
+                notification.classList.add('show');
+            } else if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle';
+                notification.classList.add('error', 'show');
+            } else if (type === 'warning') {
+                icon.className = 'fas fa-exclamation-triangle';
+                notification.classList.add('warning', 'show');
+            }
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
